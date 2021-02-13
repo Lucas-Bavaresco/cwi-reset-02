@@ -13,7 +13,7 @@ public class Aplicacao {
         resultado = calculadora.multiplicar(10d,10d);
         System.out.println("O resultado da multiplicacao é: "+resultado);
 
-        resultado = calculadora.dividir(10,2);
+        resultado = calculadora.dividir(7,2);
         System.out.println("O resultado da divisao é: "+resultado);
 
     }
