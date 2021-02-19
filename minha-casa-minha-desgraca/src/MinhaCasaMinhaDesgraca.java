@@ -26,9 +26,9 @@ public class MinhaCasaMinhaDesgraca {
         Endereco rj = new Endereco("Beira Mar", "222", "","Copacabana",
                 "Rio de Janeiro",UnidadeFederativa.RIO_DE_JANEIRO);
 
-        Imovel imovel1 = new Imovel(rs,180000d);
-        Imovel imovel2 = new Imovel(sp, 499000d);
-        Imovel imovel3 = new Imovel(rj, 375000d);
+        Apartamento imovel1 = new Apartamento(rs,180000d,10);
+        Casa imovel2 = new Casa(sp, 499000d,true);
+        Casa imovel3 = new Casa(rj, 375000d,false);
 
         Beneficiario alberto = new Beneficiario("Alberto Silva", 2500d);
         Beneficiario bruna = new Beneficiario("Bruna Santos", 1500d);

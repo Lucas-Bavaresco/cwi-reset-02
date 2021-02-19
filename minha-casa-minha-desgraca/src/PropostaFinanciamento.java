@@ -46,7 +46,10 @@ public class PropostaFinanciamento {
         } else {
             imprimirPropostaNegada();
         }
-        System.out.println(validacao);
+        System.out.println("ATENÇÃO: Status da VALIDAÇÃO FINANCIAMENTO = " + validacao + "\n" +
+                "LEGENDA:" + "\n" +
+                "true = APROVADA " + "\n" +
+                "false = NEGADA ");
     }
 
 
