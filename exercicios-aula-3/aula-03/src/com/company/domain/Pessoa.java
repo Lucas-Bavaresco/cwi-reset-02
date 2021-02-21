@@ -23,5 +23,13 @@ public class Pessoa {
     public String getNome() {
         return nome;
     }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public Genero getGenero() {
+        return genero;
+    }
 }
 
