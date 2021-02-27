@@ -1,19 +1,21 @@
 package br.com.banco.desgraca.domain;
 
 public enum InstituicaoBancaria {
+
     BANCO_DO_BRASIL("Banco do Brasil"),
     BRADESCO("Bradesco"),
     CAIXA("Caixa Econômica Federal"),
     ITAU("Itaú"),
-    NUBANK("Nubank");
+    NUBANK("NuBank");
 
-    private String descricao;
+    private String nome;
 
-    InstituicaoBancaria(String descricao) {
-        this.descricao = descricao;
+    InstituicaoBancaria(String nome) {
+        this.nome = nome;
     }
 
-    public String getDescricao() {
-        return descricao;
+    @Override
+    public String toString() {
+        return nome;
     }
 }

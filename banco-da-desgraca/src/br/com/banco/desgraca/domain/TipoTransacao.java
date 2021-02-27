@@ -1,21 +1,17 @@
 package br.com.banco.desgraca.domain;
 
 public enum TipoTransacao {
-    CONSULTAR_SALDO("Consulta de saldo"),
-    DEPOSITAR("Depósito"),
-    SACAR("Saque"),
-    TRANSFERIR("Transferência"),
-    EXIBIR_EXTRATO("Extrato da conta");
 
-    private String descricao;
+    ENTRADA("+"),
+    SAIDA("-");
 
-    TipoTransacao(String descricao) {
+    private String simbolo;
 
-        this.descricao = descricao;
+    TipoTransacao(String simbolo) {
+        this.simbolo = simbolo;
     }
 
-    public String getDescricao() {
-
-        return descricao;
+    public String getSimbolo() {
+        return simbolo;
     }
 }

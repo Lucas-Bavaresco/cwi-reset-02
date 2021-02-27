@@ -1,42 +1,66 @@
 package br.com.banco.desgraca.domain.conta;
 
 import br.com.banco.desgraca.domain.InstituicaoBancaria;
-import br.com.banco.desgraca.domain.TipoTransacao;
+import br.com.banco.desgraca.exception.InstituicaoBancariaInvalidaException;
+import br.com.banco.desgraca.exception.ValorSaqueInvalidoException;
 
-public class ContaPoupanca extends Conta {
-    public ContaPoupanca(InstituicaoBancaria instituicaoBancaria, int numeroConta) {
-        super(instituicaoBancaria, numeroConta);
-        validarInstituicaoBancaria();
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
+
+public class ContaPoupanca extends BaseContaBancaria {
+
+    private static final double MINIMO_SAQUE = 50.0;
+    private static final double TAXA_SAQUE = 0.02;
+    private static final double TAXA_TRANSFERENCIA_MESMO_BANCO = 0.005;
+    private static final double TAXA_TRANSFERENCIA_OUTROS_BANCOS = 0.01;
+
+    public ContaPoupanca(InstituicaoBancaria instituicaoBancaria) {
+        super(instituicaoBancaria);
     }
 
     @Override
-    public void sacar(Double valor) {
-        validarSaida(valor);
-        if (valor < 50) {
-            throw new RuntimeException("ATENÇÃO! O valor mínimo para saque é R$ 50.00");
-        } else {
-            double taxa = valor * 0.02;
-            setSaldo(super.getSaldo() - valor - taxa);
-            finalizarTransacao(valor, TipoTransacao.SACAR);
-            imprimirTaxas(taxa, TipoTransacao.SACAR);
+    public String toString() {
+        return String.format("Conta Poupança %s %s", getInstituicaoBancaria(), getNumero());
+    }
+
+    @Override
+    protected String gerarNumeroConta() {
+        return String.format("%s-%s", new Random().nextInt(9999) + 1, new Random().nextInt(+99) + 1);
+    }
+
+    @Override
+    protected void validarInstituicaoBancaria(InstituicaoBancaria instituicaoBancaria) {
+
+        Set<InstituicaoBancaria> bancosComPoupanca = new HashSet<>(asList(InstituicaoBancaria.values()));
+        bancosComPoupanca.remove(InstituicaoBancaria.NUBANK);
+
+        if (! bancosComPoupanca.contains(instituicaoBancaria)) {
+            throw new InstituicaoBancariaInvalidaException(instituicaoBancaria + " não possui conta poupança.");
         }
     }
 
     @Override
-    public void transferir(Double valor, ContaBancaria contaDestino) {
-        validarSaida(valor);
-        double taxa = valor * 0.01;
-        if (contaDestino.getInstituicaoBancaria().equals(this.getInstituicaoBancaria())) {
-            taxa = valor * 0.005;
+    protected void validarSaque(Double valor) {
+        if (valor < MINIMO_SAQUE) {
+            throw new ValorSaqueInvalidoException("Valor inválido para esta operação.");
         }
-        setSaldo(super.getSaldo() - valor - taxa);
-        finalizarTransacao(valor, TipoTransacao.TRANSFERIR);
-        imprimirTaxas(taxa, TipoTransacao.TRANSFERIR);
     }
 
-    private void validarInstituicaoBancaria() {
-        if (super.getInstituicaoBancaria().equals(InstituicaoBancaria.NUBANK)) {
-            throw new RuntimeException("ATENÇÃO! Conta Poupança não aceita pela instituição bancária " + InstituicaoBancaria.NUBANK + ".");
-        }
+    @Override
+    protected Double calcularTaxaSaque(Double valor) {
+        return valor * TAXA_SAQUE;
+    }
+
+    @Override
+    protected Double calcularTaxaTransferencia(Double valor, ContaBancaria contaDestino) {
+
+        Double percentual = contaDestino.getInstituicaoBancaria() == getInstituicaoBancaria()
+                ? TAXA_TRANSFERENCIA_MESMO_BANCO
+                : TAXA_TRANSFERENCIA_OUTROS_BANCOS;
+
+        return valor * percentual;
     }
 }

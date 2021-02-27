@@ -1,29 +1,37 @@
 package br.com.banco.desgraca.domain;
 
-import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import br.com.banco.desgraca.Data;
 
-import static br.com.banco.desgraca.Data.getDataTransacao;
+import java.time.LocalDate;
 
 public class Transacao {
-    private TipoTransacao tipoTransacao;
-    private LocalDate data;
-    private Double valor;
 
-    public Transacao(TipoTransacao tipoTransacao, LocalDate data, Double valor) {
-        this.tipoTransacao = tipoTransacao;
-        this.data = data;
-        this.valor = valor;
+    private final TipoTransacao tipo;
+    private final Double valor;
+    private final Double taxa;
+    private final LocalDate data;
+
+    public Transacao(TipoTransacao tipo, Double valor) {
+        this(tipo, valor, 0.0);
     }
 
-    public void exibirTransacoes() {
-        String valorFormatado = DecimalFormat.getCurrencyInstance().format(valor);
-        char simboloEntradaSaida = '+';
-        if (tipoTransacao.equals(TipoTransacao.TRANSFERIR) || tipoTransacao.equals(TipoTransacao.SACAR)) {
-            simboloEntradaSaida = '-';
-        }
-        System.out.println(simboloEntradaSaida + " " + valorFormatado + " " + data.format(DateTimeFormatter.ofPattern("dd-MM-yy")));
+    public Transacao(TipoTransacao tipo, Double valor, Double taxa) {
+        this.tipo = tipo;
+        this.valor = valor;
+        this.taxa = taxa;
+        this.data = Data.getDataTransacao();
+    }
+
+    public TipoTransacao getTipo() {
+        return tipo;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public Double getTaxa() {
+        return taxa;
     }
 
     public LocalDate getData() {

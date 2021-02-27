@@ -1,32 +1,51 @@
 package br.com.banco.desgraca.domain.conta;
 
 import br.com.banco.desgraca.domain.InstituicaoBancaria;
-import br.com.banco.desgraca.domain.TipoTransacao;
-import br.com.banco.desgraca.exception.SaldoInsuficienteException;
-import java.time.LocalDate;
+import br.com.banco.desgraca.exception.ValorSaqueInvalidoException;
 
-public class ContaCorrente extends Conta {
+import java.util.Random;
 
-    public ContaCorrente(InstituicaoBancaria instituicaoBancaria, int numeroConta) {
-        super(instituicaoBancaria, numeroConta);
+public class ContaCorrente extends BaseContaBancaria {
+
+    private static final double TAXA_TRANSFERENCIA_OUTROS_BANCOS = 0.01;
+
+    public ContaCorrente(InstituicaoBancaria instituicaoBancaria) {
+        super(instituicaoBancaria);
     }
+
     @Override
-    public void sacar(Double valor) {
-        super.sacar(valor);
+    public String toString() {
+        return String.format("Conta Corrente %s %s", getInstituicaoBancaria(), getNumero());
+    }
+
+    @Override
+    protected String gerarNumeroConta() {
+        return String.format("%s-%s", new Random().nextInt(99999) + 1, new Random().nextInt(+9) + 1);
+    }
+
+    @Override
+    protected void validarInstituicaoBancaria(InstituicaoBancaria instituicaoBancaria) {
+    }
+
+    @Override
+    protected void validarSaque(Double valor) {
         if (valor % 5 != 0) {
-            throw new RuntimeException("ATENÇÃO! Saque disponível nos valores: R$ 5,00 / R$ 10,00 / R$ 20,00 / R$ 100,00 / R$ 200,00. ");
+            throw new ValorSaqueInvalidoException("Valor inválido para esta operação.");
         }
     }
 
     @Override
-    public void transferir(Double valor, ContaBancaria contaDestino) {
-        validarSaida(valor);
-        double taxa = 0;
-        if (!contaDestino.getInstituicaoBancaria().equals(this.getInstituicaoBancaria())) {
-            taxa = valor * 0.01;
+    protected Double calcularTaxaSaque(Double valor) {
+        return 0.0;
+    }
+
+    @Override
+    protected Double calcularTaxaTransferencia(Double valor, ContaBancaria contaDestino) {
+
+        if (contaDestino.getInstituicaoBancaria() != getInstituicaoBancaria()) {
+            return valor * TAXA_TRANSFERENCIA_OUTROS_BANCOS;
         }
-        setSaldo(super.getSaldo() - valor - taxa);
-        finalizarTransacao(valor, TipoTransacao.TRANSFERIR);
-        imprimirTaxas(taxa, TipoTransacao.TRANSFERIR);
+
+        return 0.0;
     }
 }
